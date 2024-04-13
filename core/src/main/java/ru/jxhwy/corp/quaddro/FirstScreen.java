@@ -1,5 +1,6 @@
 package ru.jxhwy.corp.quaddro;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.lang.ref.Cleaner;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class FirstScreen implements Screen {
     @Override
     public void show() {
         stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
         int[]scores = new int[]{1,2,3,4};
         Color[]colors = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.ORANGE};
         ShapeEnum[]shapes = new ShapeEnum[]{ShapeEnum.CIRCLE, ShapeEnum.CROSS,ShapeEnum.SQUARE,ShapeEnum.TRIANGLE};
@@ -54,10 +57,11 @@ public class FirstScreen implements Screen {
         System.out.println(user1.cardsList);
         System.out.println(user2.cardsList);
 
-        int marginX = 150;
+        int marginX = 100;
+        int startMargin = MainGame.GAME_WIDTH/5;
         for (int i = 0; i < user1.cardsList.size(); i++) {
             Card card = user1.cardsList.get(i);
-            card.setPosition(i * marginX, 0);
+            card.setPosition(startMargin + i * marginX, 0);
             stage.addActor(card);
         }
 
@@ -65,7 +69,7 @@ public class FirstScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        ScreenUtils.clear(Color.CLEAR);
         stage.act();
         stage.draw();
     }
