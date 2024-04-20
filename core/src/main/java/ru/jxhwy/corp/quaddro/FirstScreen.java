@@ -1,22 +1,14 @@
 package ru.jxhwy.corp.quaddro;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import java.lang.ref.Cleaner;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-
-import javax.swing.text.Utilities;
 
 /** First screen of the application. Displayed after the application is created. */
 public class FirstScreen implements Screen {
@@ -25,6 +17,7 @@ public class FirstScreen implements Screen {
     User user1 = new User();
     User user2 = new User();
     Stage stage;
+
 
 
 
@@ -40,7 +33,6 @@ public class FirstScreen implements Screen {
                 for (ShapeEnum shape : shapes) {
                     Card card = new Card(number, color, shape);
                     deckOfCards.add(card);
-//                    stage.addActor(card);
                 }
             }
         }
@@ -58,18 +50,27 @@ public class FirstScreen implements Screen {
         System.out.println(user2.cardsList);
 
         int marginX = 100;
-        int startMargin = MainGame.GAME_WIDTH/5;
+        int startMargin = MainGame.GAME_WIDTH/4;
         for (int i = 0; i < user1.cardsList.size(); i++) {
             Card card = user1.cardsList.get(i);
             card.setPosition(startMargin + i * marginX, 0);
             stage.addActor(card);
         }
 
+        Texture cellTexture = new Texture("border.png");
+        for (int row = 0; row < MainGame.NUMBER_ROWS; row++) {
+            for (int column = 0; column < MainGame.NUMBER_COLUMNS; column++) {
+                int cellX = 150 * column +100;
+                int cellY = 150 *row+400;
+                CellActor ca = new CellActor(cellTexture,row,column,cellX,cellY);
+                stage.addActor(ca);
+            }
+        }
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.CLEAR);
+        ScreenUtils.clear(Color.WHITE);
         stage.act();
         stage.draw();
     }
