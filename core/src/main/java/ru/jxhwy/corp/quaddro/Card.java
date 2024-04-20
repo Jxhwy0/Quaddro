@@ -29,8 +29,11 @@ public class Card extends Group {
     Texture texture3;
     Texture texture4;
     private Rectangle boundary = new Rectangle();
+    float startX;
+    float startY;
 
-    public Card(int score, Color color, ShapeEnum shape) {
+
+    public Card(int score, Color color, ShapeEnum shape, FirstScreen firstScreen) {
         this.score = score;
         this.color = color;
         this.shape = shape;
@@ -55,41 +58,53 @@ public class Card extends Group {
         addActor(scores);
 
 
+
         setWidth(MainGame.CARD_WIDTH);
         setHeight(MainGame.CARD_HEIGHT);
         setOriginX(getWidth() / 2);
-        setOriginY(getHeight()/2);
+        setOriginY(getHeight() / 2);
         addListener(
             new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     toFront();
-                    addAction(Actions.scaleTo(1.1f,1.1f,0.25f));
+                    addAction(Actions.scaleTo(1.1f, 1.1f, 0.25f));
                     grabOffsetX = x;
                     grabOffsetY = y;
                     return true;
-            }
+                }
+
                 @Override
                 public void touchDragged(InputEvent event, float x, float y, int pointer) {
                     float deltaX = x - grabOffsetX;
                     float deltaY = y - grabOffsetY;
-                    moveBy(deltaX,deltaY);
+                    moveBy(deltaX, deltaY);
                 }
 
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    addAction(Actions.scaleTo(1.00f,1.00f,0.1f));
-                    if (findNearestCellActor() != null) {
-                            moveToActor(findNearestCellActor());
-                        }
+                    addAction(Actions.scaleTo(1.00f, 1.00f, 0.1f));
+                    if (findNearestCellActor() != null && isAllRight()) {
+                        moveToActor(findNearestCellActor());
+                    } else {
+                        addAction(Actions.moveTo(startX, startY, 0.50f, Interpolation.pow3));
+                        firstScreen.needShowWarning = true;
+                    }
                 }
             });
+    }
+
+    private boolean isAllRight() {
+//        if
+        return false;
     }
 
     @Override
     public void setPosition(float x, float y) {
         super.setPosition(x, y);
         boundary = new Rectangle(x, y, getWidth(), getHeight());
+        startX = x;
+        startY = y;
     }
 
 
@@ -101,6 +116,7 @@ public class Card extends Group {
             ", shape='" + shape + '\'' +
             '}';
     }
+
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -122,6 +138,7 @@ public class Card extends Group {
             getRotation());
         super.draw(batch, parentAlpha);
     }
+
     private CellActor findNearestCellActor() {
         Stage stage = getStage();
         Array<Actor> actors = stage.getActors();

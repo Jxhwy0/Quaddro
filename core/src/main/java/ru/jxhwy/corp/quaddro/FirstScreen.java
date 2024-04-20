@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.Collections;
@@ -18,20 +21,21 @@ public class FirstScreen implements Screen {
     User user2 = new User();
     Stage stage;
 
+    Actor warningActor;
 
-
+    boolean needShowWarning = false;
 
     @Override
     public void show() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        int[]scores = new int[]{1,2,3,4};
-        Color[]colors = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.ORANGE};
-        ShapeEnum[]shapes = new ShapeEnum[]{ShapeEnum.CIRCLE, ShapeEnum.CROSS,ShapeEnum.SQUARE,ShapeEnum.TRIANGLE};
+        int[] scores = new int[]{1, 2, 3, 4};
+        Color[] colors = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.ORANGE};
+        ShapeEnum[] shapes = new ShapeEnum[]{ShapeEnum.CIRCLE, ShapeEnum.CROSS, ShapeEnum.SQUARE, ShapeEnum.TRIANGLE};
         for (int number : scores) {
             for (Color color : colors) {
                 for (ShapeEnum shape : shapes) {
-                    Card card = new Card(number, color, shape);
+                    Card card = new Card(number, color, shape, FirstScreen.this);
                     deckOfCards.add(card);
                 }
             }
@@ -39,7 +43,7 @@ public class FirstScreen implements Screen {
 
         Collections.shuffle(deckOfCards);
 
-        for(int i = 0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             Card card = deckOfCards.pop();
             user1.cardsList.add(card);
 
@@ -50,7 +54,7 @@ public class FirstScreen implements Screen {
         System.out.println(user2.cardsList);
 
         int marginX = 100;
-        int startMargin = MainGame.GAME_WIDTH/4;
+        int startMargin = MainGame.GAME_WIDTH / 4;
         for (int i = 0; i < user1.cardsList.size(); i++) {
             Card card = user1.cardsList.get(i);
             card.setPosition(startMargin + i * marginX, 0);
@@ -60,19 +64,51 @@ public class FirstScreen implements Screen {
         Texture cellTexture = new Texture("border.png");
         for (int row = 0; row < MainGame.NUMBER_ROWS; row++) {
             for (int column = 0; column < MainGame.NUMBER_COLUMNS; column++) {
-                int cellX = 150 * column +100;
-                int cellY = 150 *row+400;
-                CellActor ca = new CellActor(cellTexture,row,column,cellX,cellY);
+                int cellX = 150 * column + 100;
+                int cellY = 150 * row + 400;
+                CellActor ca = new CellActor(cellTexture, row, column, cellX, cellY);
                 stage.addActor(ca);
             }
         }
+
+        warningActor = addText();
+        warningActor.setVisible(false);
+        stage.addActor(warningActor);
     }
+
+    public Label addText () {
+        Label.LabelStyle labelStyle1 = new Label.LabelStyle();
+        BitmapFont font = Utils.createFont();
+        labelStyle1.font = font;
+        labelStyle1.fontColor = Color.RED;
+        Label text = new Label("СЮДА НЕЛЬЗЯ!!", labelStyle1);
+        text.setPosition(450,700 );
+        return text;
+
+    }
+
+    float counter = 0;
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.WHITE);
         stage.act();
         stage.draw();
+
+        if(needShowWarning){
+            warningActor.setVisible(true);
+            counter += delta;
+        }else {
+            warningActor.setVisible(false);
+        }
+
+        System.out.println(counter);
+        System.out.println(needShowWarning);
+
+        if (counter > 1F){
+            needShowWarning = false;
+            counter = 0;
+        }
     }
     @Override
     public void resize(int width, int height) {
