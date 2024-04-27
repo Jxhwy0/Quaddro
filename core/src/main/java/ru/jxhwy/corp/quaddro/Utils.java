@@ -8,8 +8,8 @@ public class Utils {
     public static BitmapFont createFont() {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("RobotoSlab-VariableFont_wght.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 40;
-        //parameter.characters = ""
+        parameter.size = 20;
+        parameter.characters = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~*";
         BitmapFont font = fontGenerator.generateFont(parameter);
         return font;
     }

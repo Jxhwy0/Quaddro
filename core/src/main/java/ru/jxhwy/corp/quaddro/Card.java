@@ -84,7 +84,9 @@ public class Card extends Group {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     addAction(Actions.scaleTo(1.00f, 1.00f, 0.1f));
-                    if (findNearestCellActor() != null && isAllRight()) {
+                    CellActor nearCell = findNearestCellActor();
+                    if (nearCell != null && isAllRight()) {
+                        System.out.println(nearCell);
                         moveToActor(findNearestCellActor());
                     } else {
                         addAction(Actions.moveTo(startX, startY, 0.50f, Interpolation.pow3));
@@ -95,8 +97,8 @@ public class Card extends Group {
     }
 
     private boolean isAllRight() {
-//        if
-        return false;
+       // int[][]
+        return true;
     }
 
     @Override

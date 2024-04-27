@@ -65,7 +65,7 @@ public class FirstScreen implements Screen {
         for (int row = 0; row < MainGame.NUMBER_ROWS; row++) {
             for (int column = 0; column < MainGame.NUMBER_COLUMNS; column++) {
                 int cellX = 150 * column + 100;
-                int cellY = 150 * row + 400;
+                int cellY = 600 - 150 * row;
                 CellActor ca = new CellActor(cellTexture, row, column, cellX, cellY);
                 stage.addActor(ca);
             }
@@ -82,7 +82,7 @@ public class FirstScreen implements Screen {
         labelStyle1.font = font;
         labelStyle1.fontColor = Color.RED;
         Label text = new Label("СЮДА НЕЛЬЗЯ!!", labelStyle1);
-        text.setPosition(450,700 );
+        text.setPosition(300,700 );
         return text;
 
     }
@@ -101,9 +101,6 @@ public class FirstScreen implements Screen {
         }else {
             warningActor.setVisible(false);
         }
-
-        System.out.println(counter);
-        System.out.println(needShowWarning);
 
         if (counter > 1F){
             needShowWarning = false;

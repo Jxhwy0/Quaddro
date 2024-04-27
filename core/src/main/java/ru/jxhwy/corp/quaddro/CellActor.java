@@ -31,4 +31,14 @@ public class CellActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.draw(texture,getX(),getY(),getWidth(),getHeight());
     }
+
+    @Override
+    public String toString() {
+        return "CellActor{" +
+            "texture=" + texture +
+            ", row=" + row +
+            ", column=" + column +
+            ", boundary=" + boundary +
+            '}';
+    }
 }
