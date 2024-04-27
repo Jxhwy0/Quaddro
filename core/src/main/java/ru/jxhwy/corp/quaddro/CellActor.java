@@ -16,7 +16,7 @@ public class CellActor extends Actor {
         this.texture = texture;
         this.row = row;
         this.column = column;
-        setPosition(cellX,cellY);
+       // setPosition(cellX,cellY);
         setWidth(MainGame.CARD_WIDTH);
         setHeight(MainGame.CARD_HEIGHT);
         boundary = new Rectangle(cellX,cellY,MainGame.CARD_WIDTH,MainGame.CARD_HEIGHT);

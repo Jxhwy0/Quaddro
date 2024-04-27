@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.Collections;
@@ -20,7 +22,7 @@ public class FirstScreen implements Screen {
     User user1 = new User();
     User user2 = new User();
     Stage stage;
-
+    Card[][] cardArray = new Card[3][3];
     Actor warningActor;
 
     boolean needShowWarning = false;
@@ -57,19 +59,44 @@ public class FirstScreen implements Screen {
         int startMargin = MainGame.GAME_WIDTH / 4;
         for (int i = 0; i < user1.cardsList.size(); i++) {
             Card card = user1.cardsList.get(i);
+            Card card1 = user2.cardsList.get(i);
+            card1.setPosition(startMargin + i * marginX, 1100);
             card.setPosition(startMargin + i * marginX, 0);
             stage.addActor(card);
+            stage.addActor(card1);
         }
 
         Texture cellTexture = new Texture("border.png");
+
+        Table mytable = new Table();
         for (int row = 0; row < MainGame.NUMBER_ROWS; row++) {
             for (int column = 0; column < MainGame.NUMBER_COLUMNS; column++) {
-                int cellX = 150 * column + 100;
-                int cellY = 600 - 150 * row;
-                CellActor ca = new CellActor(cellTexture, row, column, cellX, cellY);
-                stage.addActor(ca);
+                CellActor ca = new CellActor(cellTexture, row, column, 0,0);
+                mytable.add(ca);
             }
+            mytable.row();
         }
+        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle();
+        ScrollPane pane = new ScrollPane(mytable, scrollPaneStyle);
+//        int cellX = 150 * column + 100;
+//        int cellY = 600 - 150 * row;
+        pane.setWidth(600);
+        pane.setHeight(400);
+
+        pane.setPosition(150, 300);
+
+        stage.addActor(pane);
+        System.out.println("mytable " + mytable.getWidth());
+        System.out.println("mytable " + mytable.getHeight());
+
+//        for (int row = 0; row < MainGame.NUMBER_ROWS; row++) {
+//            for (int column = 0; column < MainGame.NUMBER_COLUMNS; column++) {
+//                int cellX = 150 * column + 100;
+//                int cellY = 600 - 150 * row;
+//                CellActor ca = new CellActor(cellTexture, row, column, cellX, cellY);
+//                stage.addActor(ca);
+//            }
+//        }
 
         warningActor = addText();
         warningActor.setVisible(false);

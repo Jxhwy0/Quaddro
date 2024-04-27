@@ -14,7 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 public class Card extends Group {
@@ -31,7 +34,7 @@ public class Card extends Group {
     private Rectangle boundary = new Rectangle();
     float startX;
     float startY;
-
+    InputListener listener;
 
     public Card(int score, Color color, ShapeEnum shape, FirstScreen firstScreen) {
         this.score = score;
@@ -58,46 +61,50 @@ public class Card extends Group {
         addActor(scores);
 
 
-
         setWidth(MainGame.CARD_WIDTH);
         setHeight(MainGame.CARD_HEIGHT);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
-        addListener(
-            new InputListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    toFront();
-                    addAction(Actions.scaleTo(1.1f, 1.1f, 0.25f));
-                    grabOffsetX = x;
-                    grabOffsetY = y;
-                    return true;
-                }
 
-                @Override
-                public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                    float deltaX = x - grabOffsetX;
-                    float deltaY = y - grabOffsetY;
-                    moveBy(deltaX, deltaY);
-                }
+        listener = new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                toFront();
+                addAction(Actions.scaleTo(1.1f, 1.1f, 0.25f));
+                grabOffsetX = x;
+                grabOffsetY = y;
+                return true;
+            }
 
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    addAction(Actions.scaleTo(1.00f, 1.00f, 0.1f));
-                    CellActor nearCell = findNearestCellActor();
-                    if (nearCell != null && isAllRight()) {
-                        System.out.println(nearCell);
-                        moveToActor(findNearestCellActor());
-                    } else {
-                        addAction(Actions.moveTo(startX, startY, 0.50f, Interpolation.pow3));
-                        firstScreen.needShowWarning = true;
-                    }
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                float deltaX = x - grabOffsetX;
+                float deltaY = y - grabOffsetY;
+                moveBy(deltaX, deltaY);
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                addAction(Actions.scaleTo(1.00f, 1.00f, 0.1f));
+                Cell nearCell = findNearestCellActor();
+
+                if (nearCell != null && isAllRight()) {
+                    nearCell.setActor(Card.this);
+                    removeListener(listener);
+                    // moveToActor(findNearestCellActor());
+                } else {
+                    addAction(Actions.moveTo(startX, startY, 0.50f, Interpolation.pow3));
+                    firstScreen.needShowWarning = true;
                 }
-            });
+            }
+        };
+
+        addListener(listener);
+
     }
 
     private boolean isAllRight() {
-       // int[][]
+        // int[][]
         return true;
     }
 
@@ -141,21 +148,52 @@ public class Card extends Group {
         super.draw(batch, parentAlpha);
     }
 
-    private CellActor findNearestCellActor() {
+//    private CellActor findNearestCellActor() {
+//        Stage stage = getStage();
+//        Array<Actor> actors = stage.getActors();
+//        float closestDistance = Float.MAX_VALUE;
+//        CellActor nearestCellActor = null;
+//        for (Actor actor : actors) {
+//            if (actor instanceof CellActor) {
+//                CellActor cellActor = (CellActor) actor;
+//                if (boundary.overlaps(cellActor.getBoundary())) {
+//                    float currentDistance =
+//                        Vector2.dst(getX(), getY(), cellActor.getX(), cellActor.getY());
+//
+//                    if (currentDistance < closestDistance) {
+//                        nearestCellActor = cellActor;
+//                        closestDistance = currentDistance;
+//                    }
+//                }
+//            }
+//        }
+//        return nearestCellActor;
+//    }
+
+    private Cell findNearestCellActor() {
         Stage stage = getStage();
         Array<Actor> actors = stage.getActors();
         float closestDistance = Float.MAX_VALUE;
-        CellActor nearestCellActor = null;
+        Cell nearestCellActor = null;
         for (Actor actor : actors) {
-            if (actor instanceof CellActor) {
-                CellActor cellActor = (CellActor) actor;
-                if (boundary.overlaps(cellActor.getBoundary())) {
-                    float currentDistance =
-                        Vector2.dst(getX(), getY(), cellActor.getX(), cellActor.getY());
+            if (actor instanceof ScrollPane) {
+                ScrollPane pane = (ScrollPane) actor;
+                Actor tableActor = pane.getActor();
+                if (tableActor instanceof Table) {
+                    Table table = (Table) tableActor;
+                    Array<Cell> cells = table.getCells();
+                    for (Cell cell : cells) {
+                        Rectangle hitbox = new Rectangle(cell.getActorX(), cell.getActorY(), cell.getActorWidth(), cell.getActorHeight());
+                        if (boundary.overlaps(hitbox)) {
+                            float currentDistance =
+                                Vector2.dst(getX(), getY(), cell.getActorX(), cell.getActorY());
 
-                    if (currentDistance < closestDistance) {
-                        nearestCellActor = cellActor;
-                        closestDistance = currentDistance;
+                            if (currentDistance < closestDistance) {
+                                nearestCellActor = cell;
+                                closestDistance = currentDistance;
+                            }
+                        }
+
                     }
                 }
             }
