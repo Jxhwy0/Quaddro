@@ -52,7 +52,7 @@ public class Card extends Group {
             case CIRCLE -> textureRegion = new TextureRegion(texture4);
         }
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        BitmapFont font = Utils.createFont();
+        BitmapFont font = Utils.createFont(20);
         labelStyle.font = font;
         labelStyle.fontColor = Color.GOLD;
         Label scores = new Label(String.valueOf(score), labelStyle);
@@ -169,7 +169,7 @@ public class Card extends Group {
 //        }
 //        return nearestCellActor;
 //    }
-
+//
     private Cell findNearestCellActor() {
         Stage stage = getStage();
         Array<Actor> actors = stage.getActors();
@@ -183,10 +183,14 @@ public class Card extends Group {
                     Table table = (Table) tableActor;
                     Array<Cell> cells = table.getCells();
                     for (Cell cell : cells) {
-                        Rectangle hitbox = new Rectangle(cell.getActorX(), cell.getActorY(), cell.getActorWidth(), cell.getActorHeight());
+                        //Rectangle hitbox = new Rectangle((pane.getX() + cell.getActorX()) - pane.getScrollX(), (pane.getY()  + cell.getActorY()) - pane.getScrollY(), cell.getActorWidth(),  cell.getActorHeight());
+                       //Rectangle hitbox = new Rectangle((pane.getX() + cell.getActorX()) , (pane.getY()  + cell.getActorY() ), cell.getActorWidth(),  cell.getActorHeight());
+                       //Rectangle hitbox = new Rectangle( cell.getActorX() , cell.getActorY() , cell.getActorWidth(),  cell.getActorHeight());
+                       Rectangle hitbox = new Rectangle(pane.getX() +  cell.getActorX() , pane.getY()  +  cell.getActorY() , cell.getActorWidth(),  cell.getActorHeight());
+                        System.out.println(cell.getRow() + " " + cell.getColumn() + " " + hitbox);
                         if (boundary.overlaps(hitbox)) {
                             float currentDistance =
-                                Vector2.dst(getX(), getY(), cell.getActorX(), cell.getActorY());
+                                Vector2.dst( getX() - pane.getX() + pane.getScrollX(), getY() - pane.getY() + pane.getScrollY(), cell.getActorX(), cell.getActorY());
 
                             if (currentDistance < closestDistance) {
                                 nearestCellActor = cell;
@@ -195,11 +199,32 @@ public class Card extends Group {
                         }
 
                     }
+                    System.out.println("boundary" + boundary);
+                    System.out.println("pane " + pane.getScrollX() + "  " + pane.getScrollY() + " " + (pane.getY() + pane.getHeight()));
                 }
             }
         }
         return nearestCellActor;
     }
+
+//    private Cell findNearestCellActor() {
+//        Stage stage = getStage();
+//        Array<Actor> actors = stage.getActors();
+//        float closestDistance = Float.MAX_VALUE;
+//        Cell nearestCellActor = null;
+//        for (Actor actor : actors) {
+//            if (actor instanceof ScrollPane) {
+//                ScrollPane pane = (ScrollPane) actor;
+//                System.out.println("pane " + (pane.getX() + pane.getWidth()) + "   " + (pane.getY() + pane.getHeight()));
+//                Rectangle hitbox = new Rectangle(pane.getX() + 10, pane.getY() + pane.getHeight() - 125, 125, 125);
+//                if (boundary.overlaps(hitbox)) {
+//
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
 
     public void moveToActor(Actor other) {
         float x = other.getX() + (other.getWidth() - this.getWidth()) / 2;
